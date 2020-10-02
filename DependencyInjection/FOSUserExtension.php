@@ -66,7 +66,7 @@ class FOSUserExtension extends Extension
         }
 
         if (isset(self::$doctrineDrivers[$config['db_driver']])) {
-            $definition = $container->getDefinition('fos_user.object_manager');
+            $definition = $container->getDefinition('fos_user.entity_manager');
             $definition->setFactory([new Reference('fos_user.doctrine_registry'), 'getManager']);
         }
 

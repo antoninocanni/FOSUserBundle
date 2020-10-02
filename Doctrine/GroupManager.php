@@ -11,7 +11,7 @@
 
 namespace FOS\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 use FOS\UserBundle\Model\GroupInterface;
 use FOS\UserBundle\Model\GroupManager as BaseGroupManager;
@@ -19,9 +19,9 @@ use FOS\UserBundle\Model\GroupManager as BaseGroupManager;
 class GroupManager extends BaseGroupManager
 {
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
-    protected $objectManager;
+    protected $entityManager;
 
     /**
      * @var string
@@ -38,12 +38,12 @@ class GroupManager extends BaseGroupManager
      *
      * @param string $class
      */
-    public function __construct(ObjectManager $om, $class)
+    public function __construct(entityManager $em, $class)
     {
-        $this->objectManager = $om;
-        $this->repository = $om->getRepository($class);
+        $this->entityManager = $em;
+        $this->repository = $em->getRepository($class);
 
-        $metadata = $om->getClassMetadata($class);
+        $metadata = $em->getClassMetadata($class);
         $this->class = $metadata->getName();
     }
 
@@ -52,8 +52,8 @@ class GroupManager extends BaseGroupManager
      */
     public function deleteGroup(GroupInterface $group)
     {
-        $this->objectManager->remove($group);
-        $this->objectManager->flush();
+        $this->entityManager->remove($group);
+        $this->entityManager->flush();
     }
 
     /**
@@ -85,9 +85,9 @@ class GroupManager extends BaseGroupManager
      */
     public function updateGroup(GroupInterface $group, $andFlush = true)
     {
-        $this->objectManager->persist($group);
+        $this->entityManager->persist($group);
         if ($andFlush) {
-            $this->objectManager->flush();
+            $this->entityManager->flush();
         }
     }
 }

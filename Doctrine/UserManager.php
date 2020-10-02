@@ -11,7 +11,7 @@
 
 namespace FOS\UserBundle\Doctrine;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManager as BaseUserManager;
@@ -21,9 +21,9 @@ use FOS\UserBundle\Util\PasswordUpdaterInterface;
 class UserManager extends BaseUserManager
 {
     /**
-     * @var ObjectManager
+     * @var EntityManagerInterface
      */
-    protected $objectManager;
+    protected $entityManager;
 
     /**
      * @var string
@@ -35,11 +35,11 @@ class UserManager extends BaseUserManager
      *
      * @param string $class
      */
-    public function __construct(PasswordUpdaterInterface $passwordUpdater, CanonicalFieldsUpdater $canonicalFieldsUpdater, ObjectManager $om, $class)
+    public function __construct(PasswordUpdaterInterface $passwordUpdater, CanonicalFieldsUpdater $canonicalFieldsUpdater, EntityManagerInterface $em, $class)
     {
         parent::__construct($passwordUpdater, $canonicalFieldsUpdater);
 
-        $this->objectManager = $om;
+        $this->entityManager = $em;
         $this->class = $class;
     }
 
@@ -48,8 +48,8 @@ class UserManager extends BaseUserManager
      */
     public function deleteUser(UserInterface $user)
     {
-        $this->objectManager->remove($user);
-        $this->objectManager->flush();
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
     }
 
     /**
@@ -58,7 +58,7 @@ class UserManager extends BaseUserManager
     public function getClass()
     {
         if (false !== strpos($this->class, ':')) {
-            $metadata = $this->objectManager->getClassMetadata($this->class);
+            $metadata = $this->entityManager->getClassMetadata($this->class);
             $this->class = $metadata->getName();
         }
 
@@ -86,7 +86,7 @@ class UserManager extends BaseUserManager
      */
     public function reloadUser(UserInterface $user)
     {
-        $this->objectManager->refresh($user);
+        $this->entityManager->refresh($user);
     }
 
     /**
@@ -97,9 +97,9 @@ class UserManager extends BaseUserManager
         $this->updateCanonicalFields($user);
         $this->updatePassword($user);
 
-        $this->objectManager->persist($user);
+        $this->entityManager->persist($user);
         if ($andFlush) {
-            $this->objectManager->flush();
+            $this->entityManager->flush();
         }
     }
 
@@ -108,6 +108,6 @@ class UserManager extends BaseUserManager
      */
     protected function getRepository()
     {
-        return $this->objectManager->getRepository($this->getClass());
+        return $this->entityManager->getRepository($this->getClass());
     }
 }

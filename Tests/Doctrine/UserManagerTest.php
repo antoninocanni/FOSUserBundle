@@ -22,13 +22,13 @@ class UserManagerTest extends TestCase
     /** @var UserManager */
     protected $userManager;
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $om;
+    protected $em;
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
     public function setUp()
     {
-        if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
+        if (!interface_exists('Doctrine\ORM\EntityManagerInterface')) {
             $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
         }
 
@@ -37,14 +37,14 @@ class UserManagerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $class = $this->getMockBuilder('Doctrine\Common\Persistence\Mapping\ClassMetadata')->getMock();
-        $this->om = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')->getMock();
+        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')->getMock();
         $this->repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')->getMock();
 
-        $this->om->expects($this->any())
+        $this->em->expects($this->any())
             ->method('getRepository')
             ->with($this->equalTo(static::USER_CLASS))
             ->will($this->returnValue($this->repository));
-        $this->om->expects($this->any())
+        $this->em->expects($this->any())
             ->method('getClassMetadata')
             ->with($this->equalTo(static::USER_CLASS))
             ->will($this->returnValue($class));
@@ -52,14 +52,14 @@ class UserManagerTest extends TestCase
             ->method('getName')
             ->will($this->returnValue(static::USER_CLASS));
 
-        $this->userManager = new UserManager($passwordUpdater, $fieldsUpdater, $this->om, static::USER_CLASS);
+        $this->userManager = new UserManager($passwordUpdater, $fieldsUpdater, $this->em, static::USER_CLASS);
     }
 
     public function testDeleteUser()
     {
         $user = $this->getUser();
-        $this->om->expects($this->once())->method('remove')->with($this->equalTo($user));
-        $this->om->expects($this->once())->method('flush');
+        $this->em->expects($this->once())->method('remove')->with($this->equalTo($user));
+        $this->em->expects($this->once())->method('flush');
 
         $this->userManager->deleteUser($user);
     }
@@ -87,8 +87,8 @@ class UserManagerTest extends TestCase
     public function testUpdateUser()
     {
         $user = $this->getUser();
-        $this->om->expects($this->once())->method('persist')->with($this->equalTo($user));
-        $this->om->expects($this->once())->method('flush');
+        $this->em->expects($this->once())->method('persist')->with($this->equalTo($user));
+        $this->em->expects($this->once())->method('flush');
 
         $this->userManager->updateUser($user);
     }

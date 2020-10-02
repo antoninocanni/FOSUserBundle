@@ -13,7 +13,7 @@ namespace FOS\UserBundle\Doctrine;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Model\UserInterface;
@@ -67,7 +67,7 @@ class UserListener implements EventSubscriber
         $object = $args->getObject();
         if ($object instanceof UserInterface) {
             $this->updateUserFields($object);
-            $this->recomputeChangeSet($args->getObjectManager(), $object);
+            $this->recomputeChangeSet($args->getEntityManager(), $object);
         }
     }
 
@@ -83,18 +83,18 @@ class UserListener implements EventSubscriber
     /**
      * Recomputes change set for Doctrine implementations not doing it automatically after the event.
      */
-    private function recomputeChangeSet(ObjectManager $om, UserInterface $user)
+    private function recomputeChangeSet(EntityManagerInterface $em, UserInterface $user)
     {
-        $meta = $om->getClassMetadata(get_class($user));
+        $meta = $em->getClassMetadata(get_class($user));
 
-        if ($om instanceof EntityManager) {
-            $om->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $user);
+        if ($em instanceof EntityManager) {
+            $em->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $user);
 
             return;
         }
 
-        if ($om instanceof DocumentManager) {
-            $om->getUnitOfWork()->recomputeSingleDocumentChangeSet($meta, $user);
+        if ($em instanceof DocumentManager) {
+            $em->getUnitOfWork()->recomputeSingleDocumentChangeSet($meta, $user);
         }
     }
 }

@@ -363,7 +363,7 @@ class FOSUserExtensionTest extends TestCase
         $config['db_driver'] = $dbDriver;
         $loader->load([$config], $this->configuration);
 
-        $definition = $this->configuration->getDefinition('fos_user.object_manager');
+        $definition = $this->configuration->getDefinition('fos_user.entity_manager');
 
         $this->assertAlias($doctrineService, 'fos_user.doctrine_registry');
 
