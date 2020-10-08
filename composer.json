@@ -1,5 +1,5 @@
 {
-  "name": "antoninocanni/friendsofsymfony-user-bundle",
+  "name": "mariosalsano/friendsofsymfony-user-bundle",
   "type": "symfony-bundle",
   "description": "Symfony FOSUserBundle",
   "keywords": [
