@@ -52,9 +52,9 @@ registration:
 
 resetting:
   check_email: |
-    Ti abbiamo inviato una mail all'indirizzo mail da te inserito con le indicazioni per impostare una nuova password.
+    Ti abbiamo inviato una e-mail all'indirizzo da te inserito con le indicazioni per impostare una nuova password.
 
-    Se non ricevi la mail con oggetto "Imposta una nuova password", controlla nella cartella di spam, riprova seguendo la stessa procedura o scrivi una mail a help@wishraiser.com
+    Se non ricevi l'e-mail con oggetto "Imposta una nuova password", controlla nella cartella di spam. Altrimenti riprova seguendo la stessa procedura o scrivi a help@wishraiser.com .
   request:
     username: "Username o indirizzo email"
     submit: "Password reset"
